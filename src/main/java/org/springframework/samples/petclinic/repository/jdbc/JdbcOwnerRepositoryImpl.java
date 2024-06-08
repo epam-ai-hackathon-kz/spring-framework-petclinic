@@ -36,14 +36,6 @@ import java.util.List;
 
 /**
  * A simple JDBC-based implementation of the {@link OwnerRepository} interface.
- *
- * @author Ken Krebs
- * @author Juergen Hoeller
- * @author Rob Harrop
- * @author Sam Brannen
- * @author Thomas Risberg
- * @author Mark Fisher
- * @author Antoine Rey
  */
 @Repository
 public class JdbcOwnerRepositoryImpl implements OwnerRepository {
@@ -63,18 +55,17 @@ public class JdbcOwnerRepositoryImpl implements OwnerRepository {
 
     }
 
-
     /**
      * Loads {@link Owner Owners} from the data store by last name, returning all owners whose last name <i>starts</i> with
      * the given name; also loads the {@link Pet Pets} and {@link Visit Visits} for the corresponding owners, if not
      * already loaded.
      */
     @Override
-    public Collection<Owner> findByFirstName(String lastName) {
+    public Collection<Owner> findByLastName(String lastName) {
         List<Owner> owners = this.jdbcClient.sql("""
                 SELECT id, first_name, last_name, address, city, telephone
                 FROM owners
-                WHERE last_name like :lastName
+                WHERE last_name LIKE :lastName
                 """)
             .param("lastName", lastName + "%")
             .query(BeanPropertyRowMapper.newInstance(Owner.class))
