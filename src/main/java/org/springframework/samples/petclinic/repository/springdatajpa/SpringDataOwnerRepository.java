@@ -26,16 +26,16 @@ import org.springframework.samples.petclinic.repository.OwnerRepository;
 /**
  * Spring Data JPA specialization of the {@link OwnerRepository} interface
  *
- * @author Michael Isvy
+ * Michael Isvy
  * @since 15.1.2013
  */
 public interface SpringDataOwnerRepository extends OwnerRepository, Repository<Owner, Integer> {
 
     @Override
     @Query("SELECT DISTINCT owner FROM Owner owner left join fetch owner.pets WHERE owner.lastName LIKE :lastName%")
-    public Collection<Owner> findByFirstName(@Param("lastName") String lastName);
+    Collection<Owner> findByLastName(@Param("lastName") String lastName);
 
     @Override
     @Query("SELECT owner FROM Owner owner left join fetch owner.pets WHERE owner.id =:id")
-    public Owner findById(@Param("id") int id);
+    Owner findById(@Param("id") int id);
 }
