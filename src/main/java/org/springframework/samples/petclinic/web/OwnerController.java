@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.service.ClinicService;
+import org.springframework.samples.petclinic.service.exceptions.OwnerNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -130,7 +131,13 @@ public class OwnerController {
     @GetMapping("/owners/{ownerId}")
     public ModelAndView showOwner(@PathVariable("ownerId") int ownerId) {
         ModelAndView mav = new ModelAndView("owners/ownerDetails");
-        mav.addObject(this.clinicService.findOwnerById(ownerId));
+        try {
+            Owner owner = this.clinicService.findOwnerById(ownerId);
+            mav.addObject(owner);
+        } catch (OwnerNotFoundException ex) {
+            mav = new ModelAndView("error");
+            mav.addObject("message", "Owner not found with id: " + ownerId);
+        }
         return mav;
     }
 
@@ -139,6 +146,13 @@ public class OwnerController {
         Collection<Pet> petsByOwnerName = clinicService.findPetsByOwnerName(name);
         model.put("selections", petsByOwnerName);
         return "pets/petList";
+    }
+
+    @ExceptionHandler(OwnerNotFoundException.class)
+    public ModelAndView handleOwnerNotFoundException(OwnerNotFoundException ex) {
+        ModelAndView mav = new ModelAndView("error");
+        mav.addObject("message", ex.getMessage());
+        return mav;
     }
 
 }
