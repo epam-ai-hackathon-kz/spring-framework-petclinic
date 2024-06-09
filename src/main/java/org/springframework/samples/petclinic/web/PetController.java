@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * @author Juergen Hoeller
@@ -49,8 +50,10 @@ public class PetController {
     }
 
     @ModelAttribute("types")
-    public Collection<PetType> populatePetTypes() {
-        return this.clinicService.findPetTypes();
+    public Collection<String> populatePetTypes() {
+        return this.clinicService.findPetTypes().stream()
+            .map(PetType::getName)
+            .collect(Collectors.toList());
     }
 
     @ModelAttribute("owner")
