@@ -10,14 +10,13 @@
     <h2>Find Owners</h2>
 
     <spring:url value="/owners" var="formUrl"/>
-    <form:form modelAttribute="owner" action="${fn:escapeXml(formUrl)}" method="get" class="form-horizontal"
-               id="search-owner-form">
+    <form:form action="${fn:escapeXml(formUrl)}" method="get" class="form-horizontal" id="search-owner-form">
         <div class="form-group">
             <div class="control-group" id="lastName">
                 <label class="col-sm-2 control-label">Last name </label>
                 <div class="col-sm-10">
-                    <form:input class="form-control" path="lastName" size="30" maxlength="80"/>
-                    <span class="help-inline"><form:errors path="*"/></span>
+                    <input type="text" class="form-control" name="lastName" size="30" maxlength="80"/>
+                    <span class="help-inline"><form:errors path="lastName"/></span>
                 </div>
             </div>
         </div>
