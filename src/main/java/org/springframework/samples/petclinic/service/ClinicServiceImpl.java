@@ -109,13 +109,12 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<Pet> findPetsByOwnerName(String ownerName) throws OwnerNotFoundException {
+    public Collection<Pet> findPetsByOwnerName(String ownerName) {
         Collection<Owner> owners = ownerRepository.findByLastName(ownerName);
         if (owners.isEmpty()) {
             throw new OwnerNotFoundException("Owner with last name '" + ownerName + "' not found");
         }
-        Owner owner = new ArrayList<>(owners).get(0);
-        return owner.getPets();
+        return owners.stream().flatMap(owner -> owner.getPets().stream()).collect(Collectors.toList());
     }
 
     @Override
