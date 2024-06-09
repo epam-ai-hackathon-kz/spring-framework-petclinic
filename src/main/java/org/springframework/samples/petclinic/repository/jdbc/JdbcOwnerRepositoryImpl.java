@@ -70,7 +70,7 @@ public class JdbcOwnerRepositoryImpl implements OwnerRepository {
      * already loaded.
      */
     @Override
-    public Collection<Owner> findByFirstName(String lastName) {
+    public Collection<Owner> findByLastName(String lastName) {
         List<Owner> owners = this.jdbcClient.sql("""
                 SELECT id, first_name, last_name, address, city, telephone
                 FROM owners
@@ -107,7 +107,7 @@ public class JdbcOwnerRepositoryImpl implements OwnerRepository {
 
     public void loadPetsAndVisits(final Owner owner) {
         final List<JdbcPet> pets = this.jdbcClient.sql("""
-            SELECT pets.id, name, type_id, owner_id, visits.id as visit_id, description, pet_id
+            SELECT pets.id, name, birth_date, type_id, owner_id, visits.id as visit_id, visit_date, description, pet_id
             FROM pets LEFT OUTER JOIN visits ON pets.id = pet_id
             WHERE owner_id=:id ORDER BY pet_id
             """)
@@ -135,11 +135,10 @@ public class JdbcOwnerRepositoryImpl implements OwnerRepository {
                 .paramSource(parameterSource)
                 .update();
         }
-        throw new RuntimeException("Something went wrong");
     }
 
     public Collection<PetType> getPetTypes() {
-        return this.jdbcClient.sql("SELECT id, name || id FROM types ORDER BY name")
+        return this.jdbcClient.sql("SELECT id, name FROM types ORDER BY name")
             .query(BeanPropertyRowMapper.newInstance(PetType.class))
             .list();
     }
