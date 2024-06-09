@@ -34,10 +34,32 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * @author Juergen Hoeller
- * @author Ken Krebs
- * @author Arjen Poutsma
- * @author Michael Isvy
+ * Custom handler for the OwnerNotFoundException.
+ */
+@ControllerAdvice
+class OwnerNotFoundAdvice {
+    @ResponseBody
+    @ExceptionHandler(OwnerNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    String ownerNotFoundHandler(OwnerNotFoundException ex) {
+        return ex.getMessage();
+    }
+}
+
+/**
+ * Controller used to showcase what happens when an exception is thrown
+ *
+ * Also see how the default error page can be overridden by setting a `server.error.path`
+ * property in `application.properties`.
+ *
+ * Can be tested with (among others):
+ * - a standard browser (will display a simple HTML page)
+ * - using curl (will return a JSON response):
+ * `curl -i -H "Accept: application/json" localhost:8080/oups`
+ * - using curl (will return a XML response):
+ * `curl -i -H "Accept: application/xml" localhost:8080/oups`
+ * - using curl (will return a text response):
+ * `curl -i -H "Accept: text/plain" localhost:8080/oups`
  */
 @Controller
 public class OwnerController {
@@ -150,8 +172,9 @@ public class OwnerController {
 
     @ExceptionHandler(OwnerNotFoundException.class)
     public ModelAndView handleOwnerNotFoundException(OwnerNotFoundException ex) {
-        ModelAndView mav = new ModelAndView("error");
-        mav.addObject("message", ex.getMessage());
+        ModelAndView mav = new ModelAndView("exception");
+        mav.addObject("message", "Sorry, the owner you were trying to access is not found.");
+        mav.addObject("exception", ex);
         return mav;
     }
 
