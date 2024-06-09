@@ -70,7 +70,7 @@ public class JdbcOwnerRepositoryImpl implements OwnerRepository {
      * already loaded.
      */
     @Override
-    public Collection<Owner> findByFirstName(String lastName) {
+    public Collection<Owner> findByLastName(String lastName) {
         List<Owner> owners = this.jdbcClient.sql("""
                 SELECT id, first_name, last_name, address, city, telephone
                 FROM owners
