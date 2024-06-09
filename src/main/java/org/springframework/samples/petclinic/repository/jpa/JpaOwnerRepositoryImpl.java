@@ -50,7 +50,7 @@ public class JpaOwnerRepositoryImpl implements OwnerRepository {
      * - Turning on lazy-loading and using {@link OpenSessionInViewFilter}
      */
     @SuppressWarnings("unchecked")
-    public Collection<Owner> findByFirstName(String lastName) {
+    public Collection<Owner> findByLastName(String lastName) {
         // using 'join fetch' because a single query should load both owners and pets
         // using 'left join fetch' because it might happen that an owner does not have pets yet
         Query query = this.em.createQuery("SELECT DISTINCT owner FROM Owner owner left join fetch owner.pets WHERE owner.lastName LIKE :lastName");
