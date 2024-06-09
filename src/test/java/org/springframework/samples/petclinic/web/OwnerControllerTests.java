@@ -49,7 +49,7 @@ class OwnerControllerTests {
         george.setAddress("110 W. Liberty St.");
         george.setCity("Madison");
         george.setTelephone("6085551023");
-        given(this.clinicService.findOwnerById(TEST_OWNER_ID)).willReturn(george);
+        given(this.clinicService.findByLastName(TEST_OWNER_ID)).willReturn(george);
 
     }
 
@@ -97,7 +97,7 @@ class OwnerControllerTests {
 
     @Test
     void testProcessFindFormSuccess() throws Exception {
-        given(this.clinicService.findOwnerByLastName("")).willReturn(Lists.newArrayList(george, new Owner()));
+        given(this.clinicService.findByLastName("")).willReturn(Lists.newArrayList(george, new Owner()));
 
         mockMvc.perform(get("/owners"))
             .andExpect(status().isOk())
@@ -106,7 +106,7 @@ class OwnerControllerTests {
 
     @Test
     void testProcessFindFormByLastName() throws Exception {
-        given(this.clinicService.findOwnerByLastName(george.getLastName())).willReturn(Lists.newArrayList(george));
+        given(this.clinicService.findByLastName(george.getLastName())).willReturn(Lists.newArrayList(george));
 
         mockMvc.perform(get("/owners")
             .param("lastName", "Franklin")
