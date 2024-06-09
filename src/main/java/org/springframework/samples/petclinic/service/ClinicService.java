@@ -22,6 +22,7 @@ import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.model.Vet;
 import org.springframework.samples.petclinic.model.Visit;
+import org.springframework.samples.petclinic.model.VetSchedule;
 
 
 /**
@@ -50,5 +51,7 @@ public interface ClinicService {
 	Collection<Visit> findVisitsByPetId(int petId);
 
     Collection<Pet> findPetsByOwnerName(String ownerName);
+
+    Collection<VetSchedule> findVetsWithSchedules();
 
 }
