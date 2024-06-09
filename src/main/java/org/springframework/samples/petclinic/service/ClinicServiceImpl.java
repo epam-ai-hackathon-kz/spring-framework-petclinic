@@ -65,7 +65,7 @@ public class ClinicServiceImpl implements ClinicService {
     @Override
     @Transactional(readOnly = true)
     public Collection<Owner> findOwnerByLastName(String lastName) {
-        return ownerRepository.findByFirstName(lastName);
+        return ownerRepository.findByLastName(lastName);
     }
 
     @Override
@@ -108,10 +108,11 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public Collection<Pet> findPetsByOwnerName(String ownerName) {
-        Collection<Owner> owners = ownerRepository.findByFirstName(ownerName);
-        Owner owner = new ArrayList<>(owners).get(0);
-        return owner.getPets();
+        Collection<Owner> owners = ownerRepository.findByLastName(ownerName);
+        if (!owners.isEmpty()) {
+            return new ArrayList<>(owners).get(0).getPets();
+        } else {
+            return new ArrayList<>();
+        }
     }
-
-
 }
