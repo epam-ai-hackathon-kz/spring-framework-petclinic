@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
 import org.springframework.orm.hibernate5.support.OpenSessionInViewFilter;
@@ -50,7 +49,7 @@ public class JpaOwnerRepositoryImpl implements OwnerRepository {
         TypedQuery<Owner> query = this.em.createQuery(
                 "SELECT DISTINCT owner FROM Owner owner left join fetch owner.pets WHERE owner.lastName LIKE :lastName", 
                 Owner.class);
-        query.setParameter("lastName", lastName + "%");
+        query.setParameter("lastName", "%" + lastName + "%");
         return query.getResultList();
     }
 
