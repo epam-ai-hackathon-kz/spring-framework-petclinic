@@ -19,9 +19,8 @@ import java.util.Collection;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
-import org.springframework.orm.hibernate5.support.OpenSessionInViewFilter;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.repository.OwnerRepository;
 import org.springframework.stereotype.Repository;
@@ -41,29 +40,24 @@ public class JpaOwnerRepositoryImpl implements OwnerRepository {
     @PersistenceContext
     private EntityManager em;
 
-    /**
-     * Important: in the current version of this method, we load Owners with all their Pets and Visits while
-     * we do not need Visits at all and we only need one property from the Pet objects (the 'name' property).
-     * There are some ways to improve it such as:
-     * - creating a Lightweight class (example here: https://community.jboss.org/wiki/LightweightClass)
-     * - Turning on lazy-loading and using {@link OpenSessionInViewFilter}
-     */
-    @SuppressWarnings("unchecked")
+    @Override
     public Collection<Owner> findByLastName(String lastName) {
-        // using 'join fetch' because a single query should load both owners and pets
-        // using 'left join fetch' because it might happen that an owner does not have pets yet
-        Query query = this.em.createQuery("SELECT DISTINCT owner FROM Owner owner left join fetch owner.pets WHERE owner.lastName LIKE :lastName");
+        TypedQuery<Owner> query = this.em.createQuery(
+                "SELECT DISTINCT owner FROM Owner owner " +
+                "left join fetch owner.pets " +
+                "WHERE owner.lastName LIKE :lastName", Owner.class);
         query.setParameter("lastName", lastName + "%");
         return query.getResultList();
     }
 
     @Override
     public Owner findById(int id) {
-        // using 'join fetch' because a single query should load both owners and pets
-        // using 'left join fetch' because it might happen that an owner does not have pets yet
-        Query query = this.em.createQuery("SELECT owner FROM Owner owner left join fetch owner.pets WHERE owner.id =:id");
+        TypedQuery<Owner> query = this.em.createQuery(
+                "SELECT owner FROM Owner owner " +
+                "left join fetch owner.pets " +
+                "WHERE owner.id =:id", Owner.class);
         query.setParameter("id", id);
-        return (Owner) query.getSingleResult();
+        return query.getSingleResult();
     }
 
     @Override
