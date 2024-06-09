@@ -36,7 +36,7 @@ import java.util.List;
 
 /**
  * A simple JDBC-based implementation of the {@link OwnerRepository} interface.
- *
+ * 
  * @author Ken Krebs
  * @author Juergen Hoeller
  * @author Rob Harrop
@@ -106,9 +106,9 @@ public class JdbcOwnerRepositoryImpl implements OwnerRepository {
 
     public void loadPetsAndVisits(final Owner owner) {
         final List<JdbcPet> pets = this.jdbcClient.sql("""
-            SELECT pets.id, name, birth_date, type_id, owner_id, visits.id as visit_id, description, pet_id
-            FROM pets LEFT OUTER JOIN visits ON pets.id = pet_id
-            WHERE owner_id=:id ORDER BY pet_id
+            SELECT pets.id, name, birth_date, type_id, owner_id, visits.id as visit_id, visit_date, description, pet_id
+            FROM pets LEFT OUTER JOIN visits ON pets.id = pets_id AND visit_date IS NOT NULL
+            WHERE owner_id=:id ORDER BY pets.id, visit_date
             """)
             .param("id", owner.getId())
             .query(new JdbcPetVisitExtractor());
