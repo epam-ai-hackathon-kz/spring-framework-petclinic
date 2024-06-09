@@ -65,7 +65,7 @@ public class ClinicServiceImpl implements ClinicService {
     @Override
     @Transactional(readOnly = true)
     public Collection<Owner> findOwnerByLastName(String lastName) {
-        return ownerRepository.findByFirstName(lastName);
+        return ownerRepository.findByLastName(lastName);
     }
 
     @Override
@@ -74,13 +74,11 @@ public class ClinicServiceImpl implements ClinicService {
         ownerRepository.save(owner);
     }
 
-
     @Override
     @Transactional
     public void saveVisit(Visit visit) {
         visitRepository.save(visit);
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -112,6 +110,5 @@ public class ClinicServiceImpl implements ClinicService {
         Owner owner = new ArrayList<>(owners).get(0);
         return owner.getPets();
     }
-
 
 }
