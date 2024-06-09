@@ -25,6 +25,7 @@ import org.springframework.samples.petclinic.repository.VisitRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,7 +67,7 @@ public class ClinicServiceImpl implements ClinicService {
     @Override
     @Transactional(readOnly = true)
     public Collection<Owner> findOwnerByLastName(String lastName) {
-        return ownerRepository.findByFirstName(lastName);
+        return ownerRepository.findByLastName(lastName);
     }
 
     @Override
@@ -101,13 +102,18 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<Visit> findVisitsByPetId(int petId) {
         return visitRepository.findByPetId(petId);
     }
 
     @Override
-    public Collection<Pet> findPetsByOwnerName(String ownerName) {
-        Collection<Owner> owners = ownerRepository.findByFirstName(ownerName);
+    @Transactional(readOnly = true)
+    public Collection<Pet> findPetsByOwnerName(String ownerName) throws OwnerNotFoundException {
+        Collection<Owner> owners = ownerRepository.findByLastName(ownerName);
+        if (owners.isEmpty()) {
+            throw new OwnerNotFoundException("Owner with last name '" + ownerName + "' not found");
+        }
         Owner owner = new ArrayList<>(owners).get(0);
         return owner.getPets();
     }
@@ -119,5 +125,11 @@ public class ClinicServiceImpl implements ClinicService {
         return vets.stream()
                 .map(vet -> new VetWithSchedule(vet, visitRepository.findScheduleByVetId(vet.getId())))
                 .collect(Collectors.toList());
+    }
+}
+
+class OwnerNotFoundException extends RuntimeException {
+    public OwnerNotFoundException(String message) {
+        super(message);
     }
 }
