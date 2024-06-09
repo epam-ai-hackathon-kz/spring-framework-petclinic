@@ -153,4 +153,15 @@ public class JdbcOwnerRepositoryImpl implements OwnerRepository {
             loadPetsAndVisits(owner);
         }
     }
+
+    // Implement new methods to match the OwnerRepository interface changes.
+    // Since the user task does not specify what changes have been made to OwnerRepository,
+    // the following is a placeholder for any new methods that must be implemented.
+    // You will need to replace these placeholders with actual implementations.
+    @Override
+    public void newMethodFromInterface() {
+        // Placeholder for new method implementation
+    }
+    
+    // Add any other new methods required by the OwnerRepository interface here.
 }
