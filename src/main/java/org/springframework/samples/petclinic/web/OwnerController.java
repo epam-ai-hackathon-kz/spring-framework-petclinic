@@ -31,6 +31,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Juergen Hoeller
@@ -42,8 +44,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class OwnerController {
 
     private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
-    private final ClinicService clinicService;
+    private static final String REDIRECT_OWNERS = "redirect:/owners/";
+    private static final String OWNERS_FIND_OWNERS = "owners/findOwners";
+    private static final String OWNERS_OWNERS_LIST = "owners/ownersList";
+    private static final Logger logger = LoggerFactory.getLogger(OwnerController.class);
 
+    private final ClinicService clinicService;
 
     @Autowired
     public OwnerController(ClinicService clinicService) {
@@ -68,14 +74,20 @@ public class OwnerController {
             return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
         }
 
-        this.clinicService.saveOwner(owner);
-        return "redirect:/owners/" + owner.getId();
+        try {
+            this.clinicService.saveOwner(owner);
+            return REDIRECT_OWNERS + owner.getId();
+        } catch (Exception e) {
+            logger.error("Error during creating owner: ", e);
+            result.reject("ownerCreationError", "An error occurred while processing your request. Please try again.");
+            return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
+        }
     }
 
     @GetMapping(value = "/owners/find")
     public String initFindForm(Map<String, Object> model) {
         model.put("owner", new Owner());
-        return "owners/findOwners";
+        return OWNERS_FIND_OWNERS;
     }
 
     @GetMapping(value = "/owners")
@@ -91,15 +103,15 @@ public class OwnerController {
         if (results.isEmpty()) {
             // no owners found
             result.rejectValue("lastName", "notFound", "not found");
-            return "owners/findOwners";
+            return OWNERS_FIND_OWNERS;
         } else if (results.size() == 1) {
             // 1 owner found
             owner = results.iterator().next();
-            return "redirect:/owners/" + owner.getId();
+            return REDIRECT_OWNERS + owner.getId();
         } else {
             // multiple owners found
             model.put("selections", results);
-            return "owners/ownersList";
+            return OWNERS_OWNERS_LIST;
         }
     }
 
@@ -116,9 +128,15 @@ public class OwnerController {
             return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
         }
 
-        owner.setId(ownerId);
-        this.clinicService.saveOwner(owner);
-        return "redirect:/owners/{ownerId}";
+        try {
+            owner.setId(ownerId);
+            this.clinicService.saveOwner(owner);
+            return REDIRECT_OWNERS + ownerId;
+        } catch (Exception e) {
+            logger.error("Error during updating owner: ", e);
+            result.reject("ownerUpdateError", "An error occurred while processing your request. Please try again.");
+            return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
+        }
     }
 
     /**
