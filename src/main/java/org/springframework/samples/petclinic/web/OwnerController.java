@@ -21,7 +21,7 @@ import java.util.Map;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Pet;
 import org.springframework.samples.petclinic.service.ClinicService;
@@ -31,6 +31,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Juergen Hoeller
@@ -42,8 +44,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class OwnerController {
 
     private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
+    private static final Logger logger = LoggerFactory.getLogger(OwnerController.class);
     private final ClinicService clinicService;
-
 
     @Autowired
     public OwnerController(ClinicService clinicService) {
@@ -68,8 +70,14 @@ public class OwnerController {
             return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
         }
 
-        this.clinicService.saveOwner(owner);
-        return "redirect:/owners/" + owner.getId();
+        try {
+            this.clinicService.saveOwner(owner);
+            return "redirect:/owners/" + owner.getId();
+        } catch (DataAccessException e) {
+            logger.error("Error occurred during saving owner", e);
+            result.reject("owner.save.error", "Error saving owner: " + e.getMessage());
+            return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
+        }
     }
 
     @GetMapping(value = "/owners/find")
