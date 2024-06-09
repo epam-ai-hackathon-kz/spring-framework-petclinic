@@ -39,7 +39,7 @@ public interface OwnerRepository {
      * @return a <code>Collection</code> of matching <code>Owner</code>s (or an empty <code>Collection</code> if none
      * found)
      */
-    Collection<Owner> findByFirstName(String lastName);
+    Collection<Owner> findByLastName(String lastName);
 
     /**
      * Retrieve an <code>Owner</code> from the data store by id.
