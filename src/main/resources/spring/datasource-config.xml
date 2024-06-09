@@ -27,7 +27,20 @@
     http://blog.ippon.fr/2013/03/13/improving-the-performance-of-the-spring-petclinic-sample-application-part-3-of-5/-->
     <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
           p:driverClassName="${jdbc.driverClassName}" p:url="${jdbc.url}"
-          p:username="${jdbc.username}" p:password="${jdbc.password}"/>
+          p:username="${jdbc.username}" p:password="${jdbc.password}"
+          p:testWhileIdle="${jdbc.testWhileIdle}" p:testOnBorrow="${jdbc.testOnBorrow}"
+          p:validationQuery="${jdbc.validationQuery}" p:validationInterval="${jdbc.validationInterval}"
+          p:timeBetweenEvictionRunsMillis="${jdbc.timeBetweenEvictionRunsMillis}"
+          p:maxActive="${jdbc.maxActive}" p:initialSize="${jdbc.initialSize}"
+          p:maxWait="${jdbc.maxWait}" p:removeAbandonedTimeout="${jdbc.removeAbandonedTimeout}"
+          p:minEvictableIdleTimeMillis="${jdbc.minEvictableIdleTimeMillis}"
+          p:minIdle="${jdbc.minIdle}" p:logAbandoned="${jdbc.logAbandoned}"
+          p:removeAbandoned="${jdbc.removeAbandoned}" p:jdbcInterceptors="${jdbc.jdbcInterceptors}"
+          p:abandonWhenPercentageFull="${jdbc.abandonWhenPercentageFull}"
+          p:validationQueryTimeout="${jdbc.validationQueryTimeout}"
+          p:suspectTimeout="${jdbc.suspectTimeout}" p:useEquals="${jdbc.useEquals}"
+          p:jdbc4ConnectionTest="${jdbc.jdbc4ConnectionTest}" p:fairQueue="${jdbc.fairQueue}"
+          p:maxAge="${jdbc.maxAge}" p:useLock="${jdbc.useLock}" />
 
     <!-- Database initializer. If any of the script fails, the initialization stops. -->
     <!-- As an alternative, for embedded databases see <jdbc:embedded-database/>. -->
