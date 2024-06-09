@@ -99,7 +99,7 @@ public class Pet extends NamedEntity {
 
     public List<Visit> getVisits() {
         List<Visit> sortedVisits = new ArrayList<>(getVisitsInternal());
-        PropertyComparator.sort(sortedVisits, new MutableSortDefinition("description", false, false));
+        PropertyComparator.sort(sortedVisits, new MutableSortDefinition("date", false, false));
         return Collections.unmodifiableList(sortedVisits);
     }
 
@@ -108,4 +108,15 @@ public class Pet extends NamedEntity {
         visit.setPet(this);
     }
 
+    // Ensure toString does not add type ID to pet type name
+    @Override
+    public String toString() {
+        return "Pet{" +
+                "id=" + getId() +
+                ", name='" + getName() + '\'' +
+                ", birthDate=" + birthDate +
+                ", type=" + (type == null ? "null" : type.getName()) +
+                ", owner=" + (owner == null ? "null" : owner.getFirstName() + " " + owner.getLastName()) +
+                '}';
+    }
 }
