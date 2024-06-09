@@ -13,6 +13,10 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -51,8 +55,16 @@ class PetControllerTests {
         cat.setId(3);
         cat.setName("hamster");
         given(this.clinicService.findPetTypes()).willReturn(Lists.newArrayList(cat));
-        given(this.clinicService.findOwnerById(TEST_OWNER_ID)).willReturn(new Owner());
-        given(this.clinicService.findPetById(TEST_PET_ID)).willReturn(new Pet());
+
+        Owner owner = new Owner();
+        owner.setId(TEST_OWNER_ID);
+        given(this.clinicService.findOwnerById(TEST_OWNER_ID)).willReturn(owner);
+
+        Pet pet = new Pet();
+        pet.setId(TEST_PET_ID);
+        pet.setType(cat);
+        pet.setOwner(owner);
+        given(this.clinicService.findPetById(TEST_PET_ID)).willReturn(pet);
     }
 
     @Test
@@ -102,7 +114,8 @@ class PetControllerTests {
             .param("birthDate", "2015/02/12")
         )
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/owners/{ownerId}"));
+            .andExpect(view().name("redirect:/owners/{ownerId}"))
+            .andExpect(model().attribute("pet", hasProperty("type", hasProperty("name", is("hamster")))));
     }
 
     @Test
@@ -117,4 +130,20 @@ class PetControllerTests {
             .andExpect(view().name("pets/createOrUpdatePetForm"));
     }
 
+    // New test cases to verify correct pet type name is returned
+
+    @Test
+    void testInitCreationFormPetType() throws Exception {
+        mockMvc.perform(get("/owners/{ownerId}/pets/new", TEST_OWNER_ID))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("types", hasItem(hasProperty("name", is("hamster")))));
+    }
+
+    @Test
+    void testInitUpdateFormPetType() throws Exception {
+        mockMvc.perform(get("/owners/{ownerId}/pets/{petId}/edit", TEST_OWNER_ID, TEST_PET_ID))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("types", hasItem(hasProperty("name", is("hamster")))))
+            .andExpect(model().attribute("pet", hasProperty("type", hasProperty("name", is("hamster")))));
+    }
 }
