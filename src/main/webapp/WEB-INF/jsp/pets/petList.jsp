@@ -8,6 +8,11 @@
 <petclinic:layout pageName="petList">
     <h2 id="pets">Pets</h2>
 
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger">
+            <c:out value="${error}"/>
+        </div>
+    </c:if>
 
     <c:forEach var="pet" items="${selections}">
         <c:out value="${pet.name} "/>
