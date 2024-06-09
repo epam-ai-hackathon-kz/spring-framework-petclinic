@@ -39,7 +39,7 @@ public interface OwnerRepository {
      * @return a <code>Collection</code> of matching <code>Owner</code>s (or an empty <code>Collection</code> if none
      * found)
      */
-    Collection<Owner> findByFirstName(String lastName);
+    Collection<Owner> findByLastName(String lastName);
 
     /**
      * Retrieve an <code>Owner</code> from the data store by id.
@@ -50,7 +50,6 @@ public interface OwnerRepository {
      */
     Owner findById(int id);
 
-
     /**
      * Save an <code>Owner</code> to the data store, either inserting or updating it.
      *
@@ -58,6 +57,4 @@ public interface OwnerRepository {
      * @see BaseEntity#isNew
      */
     void save(Owner owner);
-
-
 }
