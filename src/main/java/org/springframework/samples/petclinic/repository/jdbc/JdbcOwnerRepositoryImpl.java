@@ -131,8 +131,11 @@ public class JdbcOwnerRepositoryImpl implements OwnerRepository {
                     .paramSource(parameterSource)
                     .update();
             }
+        } catch (DataAccessException ex) {
+            logger.error("Data access error occurred while saving owner: " + owner, ex);
+            throw ex;
         } catch (Exception ex) {
-            logger.error("Failed to save owner: " + owner, ex);
+            logger.error("Unexpected error occurred while saving owner: " + owner, ex);
             throw new DataAccessException("Failed to save owner: " + owner, ex) {};
         }
     }
