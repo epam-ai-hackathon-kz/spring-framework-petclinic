@@ -25,8 +25,9 @@ import org.springframework.samples.petclinic.repository.VisitRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Mostly used as a facade for all Petclinic controllers
@@ -74,13 +75,11 @@ public class ClinicServiceImpl implements ClinicService {
         ownerRepository.save(owner);
     }
 
-
     @Override
     @Transactional
     public void saveVisit(Visit visit) {
         visitRepository.save(visit);
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -113,5 +112,12 @@ public class ClinicServiceImpl implements ClinicService {
         return owner.getPets();
     }
 
-
+    @Override
+    @Transactional(readOnly = true)
+    public Collection<VetWithSchedule> findVetsWithSchedules() {
+        List<Vet> vets = vetRepository.findAll();
+        return vets.stream()
+                .map(vet -> new VetWithSchedule(vet, visitRepository.findScheduleByVetId(vet.getId())))
+                .collect(Collectors.toList());
+    }
 }
