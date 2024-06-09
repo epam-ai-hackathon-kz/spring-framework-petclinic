@@ -9,7 +9,8 @@
     <h2 id="pets">Pets</h2>
 
     <c:if test="${not empty error}">
-        <div class="alert alert-danger">
+        <div class="alert alert-danger" role="alert">
+            <strong>Error:</strong>
             <c:out value="${error}"/>
         </div>
     </c:if>
